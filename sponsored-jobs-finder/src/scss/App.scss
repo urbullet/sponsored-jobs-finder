@@ -1,0 +1,13 @@
+.map-container {
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
+  max-height: 500px;
+
+  .markers-list {
+    overflow: scroll;
+    padding: 15px;
+    display: flex;
+    flex-grow: 1;
+  }
+}

@@ -1,0 +1,24 @@
+.filter{
+  select{
+    margin: 0 15px;
+    padding: 15px 0;
+    border-radius: 50px;
+    border: 2px solid;
+  }
+  button{
+    text-transform: uppercase;
+    background: #ffffff;
+    padding: 10px;
+    border: 2px solid;
+    border-radius: 6px;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+
+    &:hover{
+      color: #494949;
+      border-radius: 50px;
+      border-color: #494949;
+      transition: all 0.3s ease 0s;
+    }
+  }
+}
