@@ -1,0 +1,30 @@
+.map-container {
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
+  max-height: 500px;
+
+  .companies-list {
+    max-width: 500px;
+    overflow: scroll;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .container{
+      border: 2px solid black;
+      flex-grow: 1;
+      .table {
+        .table--row {
+          cursor: pointer;
+          align-content: start;
+
+          .MuiTableCell-root{
+            max-width: 0;
+          }
+        }
+      }
+    }
+  }
+}

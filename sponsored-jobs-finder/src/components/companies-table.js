@@ -1,66 +1,47 @@
-import ReactTable from "react-table";
+import React from "react";
+import PropTypes from 'prop-types';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import '../scss/companies-table.scss';
 
-export const CompaniesTable = (companies) => {
+export const CompaniesTable = ({markers, onRowClicked}) => {
     return (
-        <div>
-            <ReactTable
-                data={companies}
-                filterable
-                defaultFilterMethod={(filter, row) =>
-                    String(row[filter.id]) === filter.value}
-                columns={[
-                            {
-                                Header: "First Name",
-                                accessor: "firstName",
-                                filterMethod: (filter, row) =>
-                                    row[filter.id].startsWith(filter.value) &&
-                                    row[filter.id].endsWith(filter.value)
-                            },
-                            {
-                                Header: "Last Name",
-                                id: "lastName",
-                                accessor: d => d.lastName,
-                                filterMethod: (filter, rows) =>
-                                    matchSorter(rows, filter.value, { keys: ["lastName"] }),
-                                filterAll: true
-                            },
-                            {
-                                Header: "Age",
-                                accessor: "age"
-                            },
-                            {
-                                Header: "Over 21",
-                                accessor: "age",
-                                id: "over",
-                                Cell: ({ value }) => (value >= 21 ? "Yes" : "No"),
-                                filterMethod: (filter, row) => {
-                                    if (filter.value === "all") {
-                                        return true;
-                                    }
-                                    if (filter.value === "true") {
-                                        return row[filter.id] >= 21;
-                                    }
-                                    return row[filter.id] < 21;
-                                },
-                                Filter: ({ filter, onChange }) =>
-                                    <select
-                                        onChange={event => onChange(event.target.value)}
-                                        style={{ width: "100%" }}
-                                        value={filter ? filter.value : "all"}
-                                    >
-                                        <option value="all">Show All</option>
-                                        <option value="true">Can Drink</option>
-                                        <option value="false">Can't Drink</option>
-                                    </select>
-                            }
-
-                ]}
-                defaultPageSize={10}
-                className="-striped -highlight"
-            />
-            <br />
-            <Tips />
-            <Logo />
+        <div className={'companies-list'}>
+            <h3>Total results found: {markers.size}</h3>
+            <TableContainer component={Paper} className={'container'}>
+                    <Table className={'table'} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Company Name</TableCell>
+                                <TableCell>Town</TableCell>
+                                <TableCell>Date Added</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {markers.map((data, index) => {
+                                const anchor = [data.get('lat'), data.get('lng')];
+                                return (
+                                    <TableRow className={'table--row'} key={index} onClick={() => onRowClicked(anchor)}>
+                                        <TableCell>{data.get('organisation_name')}</TableCell>
+                                        <TableCell>{data.get('town')}</TableCell>
+                                        <TableCell>{data.get('date_added')}</TableCell>
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
         </div>
-    )
+    );
 };
+
+CompaniesTable.propTypes = {
+    markers: PropTypes.object.isRequired,
+    onRowClicked: PropTypes.func.isRequired
+};
+

@@ -5,12 +5,14 @@ import './scss/App.scss';
 import Marker from 'pigeon-marker'
 import {ListFilter} from "./components/list-filter";
 import Map from "pigeon-maps";
+import {CompaniesTable} from "./components/companies-table";
 
 export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
             filteredList: fromJS([]),
+            showList: false,
             center: [53.37812, -1],
             zoom: 6,
             provider: 'osm',
@@ -20,6 +22,8 @@ export default class App extends Component {
         };
 
         this.applyFilter = this.applyFilter.bind(this);
+        this.handleMarkerClick = this.handleMarkerClick.bind(this);
+        this.handleRowClick = this.handleRowClick.bind(this);
     }
 
     zoomIn = () => {
@@ -36,7 +40,7 @@ export default class App extends Component {
 
     handleBoundsChange = ({center, zoom, bounds, initial}) => {
         if (initial) {
-            console.log('Got initial bounds: ', bounds)
+            // console.log('Got initial bounds: ', bounds)
         }
         this.setState({center, zoom})
     };
@@ -46,7 +50,12 @@ export default class App extends Component {
     };
 
     handleMarkerClick = ({event, payload, anchor}) => {
+        this.setState({center: anchor, zoom: 10});
         console.log(`Marker #${payload} clicked at: `, anchor)
+    };
+
+    handleRowClick = (anchor)=> {
+        this.setState({center: anchor, zoom: 10});
     };
 
     handleAnimationStart = () => {
@@ -56,8 +65,9 @@ export default class App extends Component {
     handleAnimationStop = () => {
         this.setState({animating: false})
     };
+
     applyFilter(filteredList) {
-        this.setState({filteredList: filteredList}, null);
+        this.setState({filteredList: filteredList, showList: true}, null);
     }
 
 
@@ -67,7 +77,8 @@ export default class App extends Component {
             zoom,
             provider,
             minZoom,
-            maxZoom
+            maxZoom,
+            showList
         } = this.state;
 
         return (
@@ -96,10 +107,10 @@ export default class App extends Component {
                         height={500}
                         boxClassname="pigeon-filters">
                         {
-                            this.state.filteredList.map(data => {
+                            this.state.filteredList.map((data, index) => {
                                 const anchor = [data.get('lat'), data.get('lng')];
                                 return (
-                                    <Marker key={data.get('id')}
+                                    <Marker key={index}
                                             anchor={anchor}
                                             payload={data.get('organizationName')}
                                             onClick={this.handleMarkerClick}/>
@@ -108,32 +119,12 @@ export default class App extends Component {
                         }
                     </Map>
 
-                    <div className={'markers-list'}>
-                        <ul>
-                            {this.state.filteredList.size === 0 && <li>Please select the desired filters to search</li>}
-                            {this.state.filteredList.map(data => {
-                                const anchor = [data.get('lat'), data.get('lng')];
-                                return (
-                                    <li key={data.get('id')}
-                                        onClick={() => this.setState({center: anchor, zoom: 10})}>
-                                        {data.get('organisation_name')}
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    </div>
+                    {showList && <CompaniesTable markers={this.state.filteredList} onRowClicked={this.handleRowClick}/>}
                 </div>
+
                 <div>
                     <button onClick={this.zoomIn}>Zoom In</button>
                     <button onClick={this.zoomOut}>Zoom Out</button>
-                </div>
-
-                <div style={{marginTop: 20}}>
-                    minZoom: <input onChange={(e) => this.setState({minZoom: parseInt(e.target.value) || 1})}
-                                    value={minZoom} type='number' style={{width: 40}}/>
-                    {' '}
-                    maxZoom: <input onChange={(e) => this.setState({maxZoom: parseInt(e.target.value) || 18})}
-                                    value={maxZoom} type='number' style={{width: 40}}/>
                 </div>
             </div>
         );

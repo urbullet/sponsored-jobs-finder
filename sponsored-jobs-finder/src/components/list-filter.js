@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {COMPANIES} from './../companies_list'
+import {COMPANIES} from '../utils/companies-data'
 import {fromJS} from "immutable";
+import PropTypes from 'prop-types';
 import './../scss/list-filter.scss';
-
 
 
 export const INDUSTRIES = ['administrative and support',
@@ -68,7 +68,7 @@ export const MAIN_TIERS = ['tier 2 (a (premium))'
     , 'tier 5tw (highly trusted sponsor)'];
 
 
-export const  ListFilter  = ({onClick}) => {
+export const ListFilter = ({onClick}) => {
     let filteredList = [];
     const [industry, setIndustry] = useState(INDUSTRIES[0]);
     const [mainTier, setMainTier] = useState(MAIN_TIERS[0]);
@@ -83,14 +83,16 @@ export const  ListFilter  = ({onClick}) => {
         <div className={'filter'}>
             <span className={'industry'}>
                 <label>Industry</label>
-                <select onChange={e => setIndustry(e.target.value)}>{INDUSTRIES.map(i =>
-                    <option value={i} key={i}>{i}</option>)}</select>
+                <select onChange={e => setIndustry(e.target.value)}>
+                    {INDUSTRIES.map(i => <option value={i} key={i}>{i}</option>)}
+                </select>
             </span>
 
             <span className={'tier'}>
                 <label>Tier</label>
-                <select onChange={e => setMainTier(e.target.value)}>{MAIN_TIERS.map(i =>
-                    <option value={i} key={i}>{i}</option>)}</select>
+                <select onChange={e => setMainTier(e.target.value)}>
+                    {MAIN_TIERS.map(i => <option value={i} key={i}>{i}</option>)}
+                </select>
             </span>
 
 
@@ -98,4 +100,8 @@ export const  ListFilter  = ({onClick}) => {
 
         </div>
     )
+};
+
+ListFilter.propTypes = {
+    onClick: PropTypes.func.isRequired
 };
